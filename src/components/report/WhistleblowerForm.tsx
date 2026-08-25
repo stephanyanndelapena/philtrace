@@ -118,35 +118,82 @@ export const WhistleblowerForm: React.FC<WhistleblowerFormProps> = ({
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-slate-300 font-semibold mb-1.5 flex items-center gap-1">
-              <Phone className="w-3.5 h-3.5 text-emerald-400" />
-              PH Mobile Number (For OTP Verification) *
+        <div>
+          <label className="block text-slate-300 font-semibold mb-1.5 flex items-center gap-1">
+            <Phone className="w-3.5 h-3.5 text-emerald-400" />
+            PH Mobile Number (For OTP Verification) *
+          </label>
+          <input
+            type="text"
+            placeholder="+63 917 123 4567"
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)}
+            className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 font-mono"
+            required
+          />
+        </div>
+
+        {/* Photo Evidence: File Upload or Link Input */}
+        <div className="bg-slate-950/60 p-4 rounded-xl border border-slate-800 space-y-3">
+          <div className="flex items-center justify-between">
+            <label className="text-slate-300 font-semibold flex items-center gap-1.5">
+              <ImageIcon className="w-4 h-4 text-cyan-400" />
+              Photo Evidence Attachment (Optional)
             </label>
-            <input
-              type="text"
-              placeholder="+63 917 123 4567"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 font-mono"
-              required
-            />
+            <span className="text-[11px] text-slate-500 font-mono">Upload File or Paste Link</span>
           </div>
 
-          <div>
-            <label className="block text-slate-300 font-semibold mb-1.5 flex items-center gap-1">
-              <ImageIcon className="w-3.5 h-3.5 text-cyan-400" />
-              Photo Evidence Attachment URL (Optional)
-            </label>
-            <input
-              type="url"
-              placeholder="https://... image link"
-              value={photoUrl}
-              onChange={(e) => setPhotoUrl(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {/* Option 1: File Upload */}
+            <div>
+              <label className="block text-[11px] text-slate-400 mb-1">Option A: Upload Image File</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    if (file.size > 5 * 1024 * 1024) {
+                      setErrorMsg('Selected file exceeds 5MB limit.');
+                      return;
+                    }
+                    const reader = new FileReader();
+                    reader.onloadend = () => setPhotoUrl(reader.result as string);
+                    reader.readAsDataURL(file);
+                  }
+                }}
+                className="w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-500/20 file:text-emerald-400 hover:file:bg-emerald-500/30 cursor-pointer bg-slate-900 border border-slate-800 rounded-xl p-1.5"
+              />
+            </div>
+
+            {/* Option 2: Photo Link */}
+            <div>
+              <label className="block text-[11px] text-slate-400 mb-1">Option B: Paste Photo URL</label>
+              <input
+                type="url"
+                placeholder="https://... photo URL"
+                value={photoUrl.startsWith('data:image') ? '' : photoUrl}
+                onChange={(e) => setPhotoUrl(e.target.value)}
+                className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+              />
+            </div>
           </div>
+
+          {/* Photo Thumbnail Preview */}
+          {photoUrl && (
+            <div className="relative mt-2 inline-block rounded-xl overflow-hidden border border-emerald-500/40 bg-slate-900 p-1">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={photoUrl} alt="Attached Evidence Preview" className="h-20 w-auto rounded-lg object-cover" />
+              <button
+                type="button"
+                onClick={() => setPhotoUrl('')}
+                className="absolute top-2 right-2 bg-rose-600 text-white rounded-full p-1 text-[10px] shadow-lg hover:bg-rose-500"
+                title="Remove attached photo"
+              >
+                ✕
+              </button>
+            </div>
+          )}
         </div>
 
         <button

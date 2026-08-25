@@ -132,17 +132,66 @@ export const AgencyUpdateForm: React.FC<AgencyUpdateFormProps> = ({
           />
         </div>
 
-        <div>
-          <label className="block text-slate-300 font-semibold mb-1.5">
-            Photo Document Link (Optional)
-          </label>
-          <input
-            type="url"
-            placeholder="https://... photo link"
-            value={photoUrl}
-            onChange={(e) => setPhotoUrl(e.target.value)}
-            className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500"
-          />
+        {/* Photo Documentation: File Upload or Link Input */}
+        <div className="bg-slate-950/60 p-4 rounded-xl border border-slate-800 space-y-3">
+          <div className="flex items-center justify-between">
+            <label className="text-slate-300 font-semibold flex items-center gap-1.5">
+              <span>Photo Documentation (Optional)</span>
+            </label>
+            <span className="text-[11px] text-slate-500 font-mono">Upload File or Paste Link</span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {/* Option 1: File Upload */}
+            <div>
+              <label className="block text-[11px] text-slate-400 mb-1">Option A: Upload Image File</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    if (file.size > 5 * 1024 * 1024) {
+                      setErrorMsg('Selected file exceeds 5MB limit.');
+                      return;
+                    }
+                    const reader = new FileReader();
+                    reader.onloadend = () => setPhotoUrl(reader.result as string);
+                    reader.readAsDataURL(file);
+                  }
+                }}
+                className="w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-cyan-500/20 file:text-cyan-400 hover:file:bg-cyan-500/30 cursor-pointer bg-slate-900 border border-slate-800 rounded-xl p-1.5"
+              />
+            </div>
+
+            {/* Option 2: Photo Link */}
+            <div>
+              <label className="block text-[11px] text-slate-400 mb-1">Option B: Paste Photo Link</label>
+              <input
+                type="url"
+                placeholder="https://... photo link"
+                value={photoUrl.startsWith('data:image') ? '' : photoUrl}
+                onChange={(e) => setPhotoUrl(e.target.value)}
+                className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+              />
+            </div>
+          </div>
+
+          {/* Photo Thumbnail Preview */}
+          {photoUrl && (
+            <div className="relative mt-2 inline-block rounded-xl overflow-hidden border border-cyan-500/40 bg-slate-900 p-1">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={photoUrl} alt="Attached Document Preview" className="h-20 w-auto rounded-lg object-cover" />
+              <button
+                type="button"
+                onClick={() => setPhotoUrl('')}
+                className="absolute top-2 right-2 bg-rose-600 text-white rounded-full p-1 text-[10px] shadow-lg hover:bg-rose-500"
+                title="Remove attached photo"
+              >
+                ✕
+              </button>
+            </div>
+          )}
         </div>
 
         <button
