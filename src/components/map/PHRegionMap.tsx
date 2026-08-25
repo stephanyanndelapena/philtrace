@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { MapPin, AlertTriangle, ArrowRight, Activity, Clock, FileWarning, Globe, Layers, Navigation } from 'lucide-react';
@@ -94,9 +94,9 @@ export const PHRegionMap: React.FC<PHRegionMapProps> = ({
     return ISLAND_GROUPS[islandGroupFilter].includes(reg.code);
   });
 
-  // Convert GPS lat/lng into normalized SVG coordinates for PH bounding box
-  // Apply radial dispersion algorithm to prevent overlapping pins in dense regions
-  const projectPinsNormalized = (() => {
+  // Convert GPS lat/lng into static, memoized SVG coordinates
+  // Use useMemo so coordinates and offsets are calculated ONLY ONCE to eliminate lag
+  const projectPinsNormalized = useMemo(() => {
     const rawPins = projects.map((p) => {
       const minLat = 5.0, maxLat = 19.5;
       const minLng = 117.0, maxLng = 126.5;
@@ -133,7 +133,7 @@ export const PHRegionMap: React.FC<PHRegionMapProps> = ({
 
       return { ...p, svgX: finalX, svgY: finalY };
     });
-  })();
+  }, [projects]);
 
   return (
     <div className="w-full bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-2xl backdrop-blur-xl space-y-6">
@@ -327,9 +327,9 @@ export const PHRegionMap: React.FC<PHRegionMapProps> = ({
                         onMouseEnter={() => setHoveredPin(p)}
                         onMouseLeave={() => setHoveredPin(null)}
                       >
-                        {/* Pulse Ring for Flagged Projects */}
+                        {/* Static Subtle Outer Ring for Flagged Projects (no lagging animation) */}
                         {(isStalled || isNeverStarted) && (
-                          <circle cx={p.svgX} cy={p.svgY} r="9" fill={pinColor} opacity="0.3" className="animate-ping" />
+                          <circle cx={p.svgX} cy={p.svgY} r="8.5" fill="none" stroke={pinColor} strokeWidth="1.2" opacity="0.6" />
                         )}
 
                         {/* Pin Circle */}
@@ -352,34 +352,34 @@ export const PHRegionMap: React.FC<PHRegionMapProps> = ({
 
           {/* Hover Tooltip for Regional View */}
           {viewMode === 'regional' && hoveredRegion && (
-            <div className="absolute top-4 right-4 bg-slate-900/95 border border-emerald-500/40 text-white p-3.5 rounded-xl shadow-2xl text-xs backdrop-blur-md max-w-[230px] animate-fadeIn z-10">
+            <div className="absolute top-4 right-4 bg-slate-950/95 border border-emerald-500/60 text-white p-4 rounded-xl shadow-2xl text-xs backdrop-blur-xl max-w-[240px] z-50">
               <div className="font-extrabold text-emerald-400 text-sm">{hoveredRegion.name}</div>
-              <div className="mt-2 space-y-1 text-slate-300">
+              <div className="mt-2 space-y-1 text-slate-200 font-medium">
                 <div className="flex justify-between">
                   <span>Projects:</span>
                   <span className="font-bold text-white">{hoveredRegion.totalProjects}</span>
                 </div>
                 {hoveredRegion.stalledCount > 0 && (
-                  <div className="flex justify-between text-amber-400">
+                  <div className="flex justify-between text-amber-400 font-semibold">
                     <span>Stalled:</span>
                     <span className="font-bold">{hoveredRegion.stalledCount}</span>
                   </div>
                 )}
                 {hoveredRegion.neverStartedCount > 0 && (
-                  <div className="flex justify-between text-rose-400">
+                  <div className="flex justify-between text-rose-400 font-semibold">
                     <span>Never Started:</span>
                     <span className="font-bold">{hoveredRegion.neverStartedCount}</span>
                   </div>
                 )}
                 {hoveredRegion.overdueCount > 0 && (
-                  <div className="flex justify-between text-purple-400">
+                  <div className="flex justify-between text-purple-400 font-semibold">
                     <span>Overdue:</span>
                     <span className="font-bold">{hoveredRegion.overdueCount}</span>
                   </div>
                 )}
-                <div className="flex justify-between text-emerald-300 pt-1 border-t border-slate-800">
+                <div className="flex justify-between text-emerald-300 pt-1.5 border-t border-slate-800 font-bold">
                   <span>Total Budget:</span>
-                  <span className="font-bold">₱{(hoveredRegion.totalBudget / 1000000).toFixed(0)}M PHP</span>
+                  <span>₱{(hoveredRegion.totalBudget / 1000000).toFixed(0)}M PHP</span>
                 </div>
               </div>
             </div>
@@ -387,15 +387,17 @@ export const PHRegionMap: React.FC<PHRegionMapProps> = ({
 
           {/* Hover Tooltip for GPS Pin Mode */}
           {viewMode === 'gps' && hoveredPin && (
-            <div className="absolute top-4 right-4 bg-slate-900/95 border border-cyan-500/40 text-white p-3.5 rounded-xl shadow-2xl text-xs backdrop-blur-md max-w-[240px] animate-fadeIn z-10">
-              <div className="font-extrabold text-cyan-400 text-xs line-clamp-2">{hoveredPin.name}</div>
-              <div className="mt-2 space-y-1 text-slate-300">
-                <div className="text-[11px] text-slate-400">{hoveredPin.provinceName}, {hoveredPin.regionCode}</div>
-                <div className="text-[11px] text-slate-400">{hoveredPin.contractorName}</div>
-                <div className="font-bold text-emerald-400">₱{(hoveredPin.budgetPHP / 1000000).toFixed(1)}M PHP</div>
-                {hoveredPin.anomaly.isStalled && <div className="text-amber-400 font-bold">Stalled Flag</div>}
-                {hoveredPin.anomaly.isNeverStarted && <div className="text-rose-400 font-bold">Never Started Flag</div>}
-                {hoveredPin.anomaly.isOverdue && <div className="text-purple-400 font-bold">Overdue Deadline</div>}
+            <div className="absolute top-4 right-4 bg-slate-950 border-2 border-cyan-500/80 text-white p-4 rounded-xl shadow-2xl text-xs backdrop-blur-xl max-w-[260px] z-50">
+              <div className="font-bold text-cyan-300 text-xs leading-snug line-clamp-2">{hoveredPin.name}</div>
+              <div className="mt-2.5 space-y-1.5 text-slate-200">
+                <div className="text-xs font-semibold text-slate-300">{hoveredPin.provinceName}, {hoveredPin.regionCode}</div>
+                <div className="text-[11px] font-mono text-slate-400">{hoveredPin.contractorName}</div>
+                <div className="font-extrabold text-emerald-400 text-sm pt-1 border-t border-slate-800">
+                  ₱{(hoveredPin.budgetPHP / 1000000).toFixed(1)}M PHP
+                </div>
+                {hoveredPin.anomaly.isStalled && <div className="text-amber-400 font-extrabold">STALLED FLAG</div>}
+                {hoveredPin.anomaly.isNeverStarted && <div className="text-rose-400 font-extrabold">NEVER STARTED FLAG</div>}
+                {hoveredPin.anomaly.isOverdue && <div className="text-purple-400 font-extrabold">OVERDUE DEADLINE</div>}
               </div>
             </div>
           )}
