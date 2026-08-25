@@ -21,8 +21,7 @@ export default async function AgencyPage() {
       {/* Agency Portal Header */}
       <div className="bg-slate-900 border border-slate-800 p-8 rounded-3xl shadow-xl flex flex-wrap items-center justify-between gap-6">
         <div>
-          <div className="flex items-center gap-2 text-xs font-mono text-cyan-400">
-            <Building2 className="w-4 h-4" />
+          <div className="text-xs font-mono text-cyan-400">
             GOVERNMENT & CONTRACTOR OFFICIAL PORTAL
           </div>
           <h1 className="text-3xl font-extrabold text-white mt-1">
@@ -34,8 +33,7 @@ export default async function AgencyPage() {
         </div>
 
         <div className="bg-slate-950 p-4 rounded-2xl border border-cyan-500/30 text-xs font-mono">
-          <div className="text-cyan-400 font-bold flex items-center gap-1 mb-1">
-            <Lock className="w-3.5 h-3.5" />
+          <div className="text-cyan-400 font-bold mb-1">
             Authenticated Agency Access
           </div>
           <div className="text-slate-400">Seeded Hackathon Provisioning</div>
@@ -57,7 +55,7 @@ export default async function AgencyPage() {
                 <div>
                   <div className="flex items-center justify-between text-xs mb-2">
                     <span className="text-cyan-400 font-semibold bg-cyan-950 px-2.5 py-0.5 rounded border border-cyan-500/30">
-                      📍 {p.province.name}
+                      {p.province.name}
                     </span>
                     {latestUpdate ? (
                       <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[11px] font-bold px-2 py-0.5 rounded">

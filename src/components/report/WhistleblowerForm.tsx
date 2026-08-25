@@ -78,8 +78,7 @@ export const WhistleblowerForm: React.FC<WhistleblowerFormProps> = ({
 
   return (
     <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
-      <div className="flex items-center gap-2 text-xs font-semibold text-emerald-400 uppercase tracking-wider mb-1">
-        <ShieldCheck className="w-4 h-4" />
+      <div className="text-xs font-semibold text-emerald-400 uppercase tracking-wider mb-1">
         Citizen Whistleblower Portal
       </div>
       <h3 className="text-lg font-bold text-white mb-2">
@@ -119,8 +118,7 @@ export const WhistleblowerForm: React.FC<WhistleblowerFormProps> = ({
         </div>
 
         <div>
-          <label className="block text-slate-300 font-semibold mb-1.5 flex items-center gap-1">
-            <Phone className="w-3.5 h-3.5 text-emerald-400" />
+          <label className="block text-slate-300 font-semibold mb-1.5">
             PH Mobile Number (For OTP Verification) *
           </label>
           <input
@@ -133,51 +131,29 @@ export const WhistleblowerForm: React.FC<WhistleblowerFormProps> = ({
           />
         </div>
 
-        {/* Photo Evidence: File Upload or Link Input */}
+        {/* Photo Evidence: File Upload */}
         <div className="bg-slate-950/60 p-4 rounded-xl border border-slate-800 space-y-3">
-          <div className="flex items-center justify-between">
-            <label className="text-slate-300 font-semibold flex items-center gap-1.5">
-              <ImageIcon className="w-4 h-4 text-cyan-400" />
-              Photo Evidence Attachment (Optional)
-            </label>
-            <span className="text-[11px] text-slate-500 font-mono">Upload File or Paste Link</span>
-          </div>
+          <label className="block text-slate-300 font-semibold mb-1">
+            Photo Evidence Attachment (Optional)
+          </label>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {/* Option 1: File Upload */}
-            <div>
-              <label className="block text-[11px] text-slate-400 mb-1">Option A: Upload Image File</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    if (file.size > 5 * 1024 * 1024) {
-                      setErrorMsg('Selected file exceeds 5MB limit.');
-                      return;
-                    }
-                    const reader = new FileReader();
-                    reader.onloadend = () => setPhotoUrl(reader.result as string);
-                    reader.readAsDataURL(file);
-                  }
-                }}
-                className="w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-500/20 file:text-emerald-400 hover:file:bg-emerald-500/30 cursor-pointer bg-slate-900 border border-slate-800 rounded-xl p-1.5"
-              />
-            </div>
-
-            {/* Option 2: Photo Link */}
-            <div>
-              <label className="block text-[11px] text-slate-400 mb-1">Option B: Paste Photo URL</label>
-              <input
-                type="url"
-                placeholder="https://... photo URL"
-                value={photoUrl.startsWith('data:image') ? '' : photoUrl}
-                onChange={(e) => setPhotoUrl(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
-              />
-            </div>
-          </div>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                  setErrorMsg('Selected file exceeds 5MB limit.');
+                  return;
+                }
+                const reader = new FileReader();
+                reader.onloadend = () => setPhotoUrl(reader.result as string);
+                reader.readAsDataURL(file);
+              }
+            }}
+            className="w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-500/20 file:text-emerald-400 hover:file:bg-emerald-500/30 cursor-pointer bg-slate-900 border border-slate-800 rounded-xl p-1.5"
+          />
 
           {/* Photo Thumbnail Preview */}
           {photoUrl && (
@@ -200,7 +176,6 @@ export const WhistleblowerForm: React.FC<WhistleblowerFormProps> = ({
           type="submit"
           className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2"
         >
-          <Lock className="w-4 h-4" />
           Verify Phone & Submit Whistleblower Report
         </button>
       </form>

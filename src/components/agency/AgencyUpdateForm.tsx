@@ -62,8 +62,7 @@ export const AgencyUpdateForm: React.FC<AgencyUpdateFormProps> = ({
 
   return (
     <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
-      <div className="flex items-center gap-2 text-xs font-semibold text-cyan-400 uppercase tracking-wider mb-1">
-        <Building2 className="w-4 h-4" />
+      <div className="text-xs font-semibold text-cyan-400 uppercase tracking-wider mb-1">
         Official Agency & Contractor Portal
       </div>
       <h3 className="text-lg font-bold text-white mb-2">
@@ -132,50 +131,29 @@ export const AgencyUpdateForm: React.FC<AgencyUpdateFormProps> = ({
           />
         </div>
 
-        {/* Photo Documentation: File Upload or Link Input */}
+        {/* Photo Documentation: File Upload */}
         <div className="bg-slate-950/60 p-4 rounded-xl border border-slate-800 space-y-3">
-          <div className="flex items-center justify-between">
-            <label className="text-slate-300 font-semibold flex items-center gap-1.5">
-              <span>Photo Documentation (Optional)</span>
-            </label>
-            <span className="text-[11px] text-slate-500 font-mono">Upload File or Paste Link</span>
-          </div>
+          <label className="block text-slate-300 font-semibold mb-1">
+            Photo Documentation (Optional)
+          </label>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {/* Option 1: File Upload */}
-            <div>
-              <label className="block text-[11px] text-slate-400 mb-1">Option A: Upload Image File</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    if (file.size > 5 * 1024 * 1024) {
-                      setErrorMsg('Selected file exceeds 5MB limit.');
-                      return;
-                    }
-                    const reader = new FileReader();
-                    reader.onloadend = () => setPhotoUrl(reader.result as string);
-                    reader.readAsDataURL(file);
-                  }
-                }}
-                className="w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-cyan-500/20 file:text-cyan-400 hover:file:bg-cyan-500/30 cursor-pointer bg-slate-900 border border-slate-800 rounded-xl p-1.5"
-              />
-            </div>
-
-            {/* Option 2: Photo Link */}
-            <div>
-              <label className="block text-[11px] text-slate-400 mb-1">Option B: Paste Photo Link</label>
-              <input
-                type="url"
-                placeholder="https://... photo link"
-                value={photoUrl.startsWith('data:image') ? '' : photoUrl}
-                onChange={(e) => setPhotoUrl(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
-              />
-            </div>
-          </div>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                  setErrorMsg('Selected file exceeds 5MB limit.');
+                  return;
+                }
+                const reader = new FileReader();
+                reader.onloadend = () => setPhotoUrl(reader.result as string);
+                reader.readAsDataURL(file);
+              }
+            }}
+            className="w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-cyan-500/20 file:text-cyan-400 hover:file:bg-cyan-500/30 cursor-pointer bg-slate-900 border border-slate-800 rounded-xl p-1.5"
+          />
 
           {/* Photo Thumbnail Preview */}
           {photoUrl && (
