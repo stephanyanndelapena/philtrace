@@ -81,7 +81,7 @@ export const PHRegionMap: React.FC<PHRegionMapProps> = ({
   const [islandGroupFilter, setIslandGroupFilter] = useState<'all' | 'luzon' | 'visayas' | 'mindanao'>('all');
 
   const handleFilterClick = (filter: string) => {
-    router.push(`/?filter=${filter}`);
+    router.push(`/?filter=${filter}#directory`, { scroll: false });
   };
 
   const filteredRegions = regions.filter((reg) => {

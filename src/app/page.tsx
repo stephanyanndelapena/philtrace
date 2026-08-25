@@ -203,7 +203,7 @@ export default async function HomePage({ searchParams }: PageProps) {
       })()}
 
       {/* Global Project Explorer Section */}
-      <div className="space-y-4">
+      <div id="directory" className="space-y-4 pt-4">
         <div className="flex flex-wrap items-center justify-between gap-4 pb-2 border-b border-slate-800/80">
           <div>
             <h2 className="text-xl font-bold text-white">Project Investigation Directory</h2>
@@ -215,7 +215,8 @@ export default async function HomePage({ searchParams }: PageProps) {
           {/* Directory Filter Buttons */}
           <div className="flex flex-wrap items-center gap-2">
             <Link
-              href="/?filter=all"
+              href="/?filter=all#directory"
+              scroll={false}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 activeFilter === 'all'
                   ? 'bg-emerald-500 text-slate-950 shadow-md'
@@ -225,7 +226,8 @@ export default async function HomePage({ searchParams }: PageProps) {
               All ({projectsWithAnomalies.length})
             </Link>
             <Link
-              href="/?filter=on_track"
+              href="/?filter=on_track#directory"
+              scroll={false}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 activeFilter === 'on_track'
                   ? 'bg-emerald-500/30 text-emerald-300 border border-emerald-500/50 shadow-md'
@@ -235,7 +237,8 @@ export default async function HomePage({ searchParams }: PageProps) {
               On Track ({projectsWithAnomalies.filter((p) => !p.anomaly.flags.length).length})
             </Link>
             <Link
-              href="/?filter=never_started"
+              href="/?filter=never_started#directory"
+              scroll={false}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 activeFilter === 'never_started'
                   ? 'bg-rose-500 text-white shadow-md'
@@ -245,7 +248,8 @@ export default async function HomePage({ searchParams }: PageProps) {
               Never Started ({totalNeverStarted})
             </Link>
             <Link
-              href="/?filter=overdue"
+              href="/?filter=overdue#directory"
+              scroll={false}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 activeFilter === 'overdue'
                   ? 'bg-purple-500 text-white shadow-md'
@@ -255,7 +259,8 @@ export default async function HomePage({ searchParams }: PageProps) {
               Overdue ({projectsWithAnomalies.filter((p) => p.anomaly.isOverdue).length})
             </Link>
             <Link
-              href="/?filter=stalled"
+              href="/?filter=stalled#directory"
+              scroll={false}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 activeFilter === 'stalled'
                   ? 'bg-amber-500 text-slate-950 shadow-md'
