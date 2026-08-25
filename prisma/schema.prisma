@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Region {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  code      String     @unique
+  provinces Province[]
+}
+
+model Province {
+  id       String    @id @default(cuid())
+  name     String
+  region   Region    @relation(fields: [regionId], references: [id])
+  regionId String
+  projects Project[]
+
+  @@unique([name, regionId])
+}
+
+model Project {
+  id             String         @id @default(cuid())
+  name           String
+  province       Province       @relation(fields: [provinceId], references: [id])
+  provinceId     String
+  gpsLat         Float
+  gpsLng         Float
+  budgetPHP      Float
+  startDate      DateTime
+  completionDate DateTime?
+  status         String         // "ongoing" | "completed" | "flagged"
+  contractor     Contractor     @relation(fields: [contractorId], references: [id])
+  contractorId   String
+  sourcePdfUrl   String
+  aiBriefing     String         // JSON string: { what, who, where, budgetPHP, summary, keyRisks }
+  lastActivityAt DateTime?
+  comments       Comment[]
+  agencyUpdates  AgencyUpdate[]
+}
+
+model Contractor {
+  id            String    @id @default(cuid())
+  name          String
+  address       String
+  phone         String
+  totalEarnings Float
+  isShellFlag   Boolean   @default(false)
+  projects      Project[]
+}
+
+model Comment {
+  id                 String   @id @default(cuid())
+  project            Project  @relation(fields: [projectId], references: [id])
+  projectId          String
+  text               String
+  severity           String   // "low" | "medium" | "high" | "critical"
+  rationale          String
+  phoneVerified      Boolean  @default(false)
+  corroborationCount Int      @default(0)
+  photoUrl           String?
+  createdAt          DateTime @default(now())
+}
+
+model AgencyUpdate {
+  id          String   @id @default(cuid())
+  project     Project  @relation(fields: [projectId], references: [id])
+  projectId   String
+  agencyName  String
+  percentDone Int
+  note        String
+  photoUrl    String?
+  createdAt   DateTime @default(now())
+}
