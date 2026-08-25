@@ -77,34 +77,30 @@ export const Header: React.FC = () => {
           <button
             onClick={handleSyncLiveData}
             disabled={isSyncing}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 transition-all disabled:opacity-50"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 transition-all disabled:opacity-50"
             title="Sync Live Open Data from PhilGEPS, DPWH & DBM"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin text-emerald-300' : ''}`} />
             <span className="hidden lg:inline">{isSyncing ? 'Syncing Portal...' : 'Sync Live Data'}</span>
           </button>
 
           <Link
             href="/"
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-900 transition-colors"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-900 transition-colors"
           >
-            <Map className="w-4 h-4 text-emerald-400" />
             <span className="hidden sm:inline">Interactive Map</span>
           </Link>
 
           <Link
             href="/contractors"
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-900 transition-colors"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-900 transition-colors"
           >
-            <ShieldAlert className="w-4 h-4 text-rose-400" />
             <span className="hidden sm:inline">Contractor X-Ray</span>
           </Link>
 
           <Link
             href="/agency"
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-900 transition-colors"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-900 transition-colors"
           >
-            <Building2 className="w-4 h-4 text-cyan-400" />
             <span className="hidden sm:inline">Agency Portal</span>
           </Link>
         </nav>

@@ -81,7 +81,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap items-center gap-2">
               <span className="bg-emerald-950 text-emerald-400 border border-emerald-500/40 text-xs font-bold px-3 py-1 rounded-lg">
-                📍 {project.province.name}, {project.province.region.name}
+                {project.province.name}, {project.province.region.name}
               </span>
 
               {anomaly.isStalled && (

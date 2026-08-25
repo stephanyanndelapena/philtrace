@@ -361,12 +361,12 @@ export const PHRegionMap: React.FC<PHRegionMapProps> = ({
             <div className="absolute top-4 right-4 bg-slate-900/95 border border-cyan-500/40 text-white p-3.5 rounded-xl shadow-2xl text-xs backdrop-blur-md max-w-[240px] animate-fadeIn z-10">
               <div className="font-extrabold text-cyan-400 text-xs line-clamp-2">{hoveredPin.name}</div>
               <div className="mt-2 space-y-1 text-slate-300">
-                <div className="text-[11px] text-slate-400">📍 {hoveredPin.provinceName}, {hoveredPin.regionCode}</div>
-                <div className="text-[11px] text-slate-400">🏗️ {hoveredPin.contractorName}</div>
+                <div className="text-[11px] text-slate-400">{hoveredPin.provinceName}, {hoveredPin.regionCode}</div>
+                <div className="text-[11px] text-slate-400">{hoveredPin.contractorName}</div>
                 <div className="font-bold text-emerald-400">₱{(hoveredPin.budgetPHP / 1000000).toFixed(1)}M PHP</div>
-                {hoveredPin.anomaly.isStalled && <div className="text-amber-400 font-bold">⚠️ Stalled Flag</div>}
-                {hoveredPin.anomaly.isNeverStarted && <div className="text-rose-400 font-bold">🛑 Never Started Flag</div>}
-                {hoveredPin.anomaly.isOverdue && <div className="text-purple-400 font-bold">⏰ Overdue Deadline</div>}
+                {hoveredPin.anomaly.isStalled && <div className="text-amber-400 font-bold">Stalled Flag</div>}
+                {hoveredPin.anomaly.isNeverStarted && <div className="text-rose-400 font-bold">Never Started Flag</div>}
+                {hoveredPin.anomaly.isOverdue && <div className="text-purple-400 font-bold">Overdue Deadline</div>}
               </div>
             </div>
           )}

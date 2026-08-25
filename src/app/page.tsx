@@ -257,9 +257,9 @@ export default async function HomePage({ searchParams }: PageProps) {
 
                 <div className="text-xs text-slate-400 space-y-1 font-mono">
                   <div className="text-slate-300 font-semibold">
-                    📍 {p.province.name}, {p.province.region.name}
+                    {p.province.name}, {p.province.region.name}
                   </div>
-                  <div>🏢 {p.contractor.name}</div>
+                  <div>{p.contractor.name}</div>
                 </div>
               </div>
 
