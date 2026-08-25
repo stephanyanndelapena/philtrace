@@ -79,10 +79,15 @@ export const PHRegionMap: React.FC<PHRegionMapProps> = ({
   const [hoveredPin, setHoveredPin] = useState<ProjectPin | null>(null);
   const [viewMode, setViewMode] = useState<'regional' | 'gps'>('regional');
   const [islandGroupFilter, setIslandGroupFilter] = useState<'all' | 'luzon' | 'visayas' | 'mindanao'>('all');
+  const [zoomScale, setZoomScale] = useState<number>(1);
 
   const handleFilterClick = (filter: string) => {
     router.push(`/?filter=${filter}#directory`, { scroll: false });
   };
+
+  const handleZoomIn = () => setZoomScale((prev) => Math.min(3, prev + 0.5));
+  const handleZoomOut = () => setZoomScale((prev) => Math.max(1, prev - 0.5));
+  const handleResetZoom = () => setZoomScale(1);
 
   const filteredRegions = regions.filter((reg) => {
     if (islandGroupFilter === 'all') return true;
@@ -90,16 +95,45 @@ export const PHRegionMap: React.FC<PHRegionMapProps> = ({
   });
 
   // Convert GPS lat/lng into normalized SVG coordinates for PH bounding box
-  // PH Lat ~ 5.0 to 19.5, Lng ~ 117.0 to 126.5
-  const projectPinsNormalized = projects.map((p) => {
-    const minLat = 5.0, maxLat = 19.5;
-    const minLng = 117.0, maxLng = 126.5;
+  // Apply radial dispersion algorithm to prevent overlapping pins in dense regions
+  const projectPinsNormalized = (() => {
+    const rawPins = projects.map((p) => {
+      const minLat = 5.0, maxLat = 19.5;
+      const minLng = 117.0, maxLng = 126.5;
 
-    const x = ((p.gpsLng - minLng) / (maxLng - minLng)) * 260 + 30;
-    const y = ((maxLat - p.gpsLat) / (maxLat - minLat)) * 360 + 40;
+      const baseX = ((p.gpsLng - minLng) / (maxLng - minLng)) * 260 + 30;
+      const baseY = ((maxLat - p.gpsLat) / (maxLat - minLat)) * 360 + 40;
 
-    return { ...p, svgX: Math.max(20, Math.min(300, x)), svgY: Math.max(20, Math.min(420, y)) };
-  });
+      return { ...p, baseX, baseY };
+    });
+
+    // Resolve pin collisions with radial offset dispersion
+    return rawPins.map((p, i, arr) => {
+      let offsetX = 0;
+      let offsetY = 0;
+      let overlapIndex = 0;
+
+      arr.forEach((other, j) => {
+        if (i > j) {
+          const dx = p.baseX - other.baseX;
+          const dy = p.baseY - other.baseY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 12) {
+            overlapIndex++;
+            const angle = overlapIndex * 2.3;
+            const radius = 13 * Math.ceil(overlapIndex / 4);
+            offsetX += Math.cos(angle) * radius;
+            offsetY += Math.sin(angle) * radius;
+          }
+        }
+      });
+
+      const finalX = Math.max(20, Math.min(300, p.baseX + offsetX));
+      const finalY = Math.max(20, Math.min(420, p.baseY + offsetY));
+
+      return { ...p, svgX: finalX, svgY: finalY };
+    });
+  })();
 
   return (
     <div className="w-full bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-2xl backdrop-blur-xl space-y-6">
@@ -144,134 +178,177 @@ export const PHRegionMap: React.FC<PHRegionMapProps> = ({
         </div>
       </div>
 
-      {/* Island Group Filter Bar */}
+      {/* Island Group Filter Bar & Map Zoom Toolbar */}
       <div className="flex items-center justify-between flex-wrap gap-3 bg-slate-950/60 p-3 rounded-xl border border-slate-800">
-        <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-          <Globe className="w-3.5 h-3.5 text-emerald-400" /> Filter by Island Group:
-        </span>
-        <div className="flex items-center gap-2">
-          {(['all', 'luzon', 'visayas', 'mindanao'] as const).map((group) => (
+        <div className="flex items-center gap-3 flex-wrap">
+          <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+            <Globe className="w-3.5 h-3.5 text-emerald-400" /> Filter by Island Group:
+          </span>
+          <div className="flex items-center gap-2">
+            {(['all', 'luzon', 'visayas', 'mindanao'] as const).map((group) => (
+              <button
+                key={group}
+                onClick={() => {
+                  setIslandGroupFilter(group);
+                  if (group === 'luzon') setZoomScale(1.4);
+                  else if (group === 'visayas') setZoomScale(1.8);
+                  else if (group === 'mindanao') setZoomScale(1.6);
+                  else setZoomScale(1);
+                }}
+                className={`px-3 py-1 rounded-md text-xs font-medium capitalize transition-all ${
+                  islandGroupFilter === group
+                    ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800/80'
+                }`}
+              >
+                {group === 'all' ? 'All Regions (17)' : group}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Map Zoom Controls Panel */}
+        <div className="flex items-center gap-1.5 bg-slate-900 px-2.5 py-1 rounded-lg border border-slate-800">
+          <span className="text-[11px] font-mono text-slate-400 mr-1">Zoom: {zoomScale.toFixed(1)}x</span>
+          <button
+            onClick={handleZoomIn}
+            disabled={zoomScale >= 3}
+            className="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-white rounded text-xs font-bold disabled:opacity-40"
+            title="Zoom In"
+          >
+            +
+          </button>
+          <button
+            onClick={handleZoomOut}
+            disabled={zoomScale <= 1}
+            className="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-white rounded text-xs font-bold disabled:opacity-40"
+            title="Zoom Out"
+          >
+            -
+          </button>
+          {zoomScale > 1 && (
             <button
-              key={group}
-              onClick={() => setIslandGroupFilter(group)}
-              className={`px-3 py-1 rounded-md text-xs font-medium capitalize transition-all ${
-                islandGroupFilter === group
-                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/80'
-              }`}
+              onClick={handleResetZoom}
+              className="px-2 py-0.5 bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 rounded text-[10px] font-semibold"
+              title="Reset Zoom to Default"
             >
-              {group === 'all' ? 'All Regions (17)' : group}
+              Reset
             </button>
-          ))}
+          )}
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Interactive SVG Geographic Map */}
-        <div className="lg:col-span-6 relative flex justify-center items-center bg-slate-950/60 rounded-xl p-4 border border-slate-800/80 min-h-[430px]">
-          <svg
-            viewBox="0 0 320 440"
-            className="w-full max-w-[320px] h-auto drop-shadow-2xl"
+        <div className="lg:col-span-6 relative flex justify-center items-center bg-slate-950/60 rounded-xl p-4 border border-slate-800/80 min-h-[430px] overflow-hidden">
+          <div
+            className="w-full max-w-[320px] transition-transform duration-300 ease-out origin-center"
+            style={{ transform: `scale(${zoomScale})` }}
           >
-            {/* National Outline Silhouette */}
-            <path
-              d="M 100 50 L 225 60 L 260 210 L 270 290 L 260 410 L 100 400 L 50 260 Z"
-              fill="#0f172a"
-              stroke="#1e293b"
-              strokeWidth="2"
-              opacity="0.4"
-            />
+            <svg
+              viewBox="0 0 320 440"
+              className="w-full h-auto drop-shadow-2xl"
+            >
+              {/* National Outline Silhouette */}
+              <path
+                d="M 100 50 L 225 60 L 260 210 L 270 290 L 260 410 L 100 400 L 50 260 Z"
+                fill="#0f172a"
+                stroke="#1e293b"
+                strokeWidth="2"
+                opacity="0.4"
+              />
 
-            {/* Regional Mode: Polygon Region Choropleth */}
-            {viewMode === 'regional' &&
-              MAP_REGIONS.map((mr) => {
-                const regData = regions.find((r) => r.code === mr.code);
-                const isHovered = hoveredRegion?.code === mr.code;
-                const hasAnomaly = regData && (regData.stalledCount > 0 || regData.neverStartedCount > 0 || regData.overdueCount > 0);
-                const isVisibleInIslandGroup = islandGroupFilter === 'all' || ISLAND_GROUPS[islandGroupFilter].includes(mr.code);
+              {/* Regional Mode: Polygon Region Choropleth */}
+              {viewMode === 'regional' &&
+                MAP_REGIONS.map((mr) => {
+                  const regData = regions.find((r) => r.code === mr.code);
+                  const isHovered = hoveredRegion?.code === mr.code;
+                  const hasAnomaly = regData && (regData.stalledCount > 0 || regData.neverStartedCount > 0 || regData.overdueCount > 0);
+                  const isVisibleInIslandGroup = islandGroupFilter === 'all' || ISLAND_GROUPS[islandGroupFilter].includes(mr.code);
 
-                if (!isVisibleInIslandGroup) return null;
-
-                return (
-                  <g
-                    key={mr.code}
-                    className="cursor-pointer transition-all duration-200"
-                    onClick={() => router.push(`/regions/${encodeURIComponent(mr.code)}`)}
-                    onMouseEnter={() => regData && setHoveredRegion(regData)}
-                    onMouseLeave={() => setHoveredRegion(null)}
-                  >
-                    <path
-                      d={mr.path}
-                      fill={isHovered ? '#10b981' : hasAnomaly ? '#f59e0b' : mr.color}
-                      stroke="#020617"
-                      strokeWidth={isHovered ? '2.5' : '1'}
-                      opacity={isHovered ? 1 : 0.85}
-                      className="transition-all duration-300 filter drop-shadow-md hover:brightness-125"
-                    />
-                    <text
-                      x={mr.labelPos.x}
-                      y={mr.labelPos.y}
-                      fill="#ffffff"
-                      fontSize="9"
-                      fontWeight="bold"
-                      className="pointer-events-none select-none drop-shadow-md"
-                    >
-                      {mr.code}
-                    </text>
-                  </g>
-                );
-              })}
-
-            {/* GPS Mode: Exact GPS Lat/Lng Pinpoint Markers */}
-            {viewMode === 'gps' && (
-              <>
-                {/* Subtle base island outlines */}
-                {MAP_REGIONS.map((mr) => (
-                  <path key={mr.code} d={mr.path} fill="#1e293b" stroke="#334155" strokeWidth="0.8" opacity="0.5" />
-                ))}
-
-                {projectPinsNormalized.map((p) => {
-                  const isStalled = p.anomaly.isStalled;
-                  const isNeverStarted = p.anomaly.isNeverStarted;
-                  const isOverdue = p.anomaly.isOverdue;
-
-                  const pinColor = isNeverStarted
-                    ? '#f43f5e'
-                    : isStalled
-                    ? '#f59e0b'
-                    : isOverdue
-                    ? '#a855f7'
-                    : '#10b981';
+                  if (!isVisibleInIslandGroup) return null;
 
                   return (
                     <g
-                      key={p.id}
-                      className="cursor-pointer group"
-                      onClick={() => router.push(`/projects/${p.id}`)}
-                      onMouseEnter={() => setHoveredPin(p)}
-                      onMouseLeave={() => setHoveredPin(null)}
+                      key={mr.code}
+                      className="cursor-pointer transition-all duration-200"
+                      onClick={() => router.push(`/regions/${encodeURIComponent(mr.code)}`)}
+                      onMouseEnter={() => regData && setHoveredRegion(regData)}
+                      onMouseLeave={() => setHoveredRegion(null)}
                     >
-                      {/* Pulse Ring for Flagged Projects */}
-                      {(isStalled || isNeverStarted) && (
-                        <circle cx={p.svgX} cy={p.svgY} r="9" fill={pinColor} opacity="0.3" className="animate-ping" />
-                      )}
-
-                      {/* Pin Circle */}
-                      <circle
-                        cx={p.svgX}
-                        cy={p.svgY}
-                        r="5.5"
-                        fill={pinColor}
-                        stroke="#ffffff"
-                        strokeWidth="1.5"
-                        className="transition-transform group-hover:scale-125"
+                      <path
+                        d={mr.path}
+                        fill={isHovered ? '#10b981' : hasAnomaly ? '#f59e0b' : mr.color}
+                        stroke="#020617"
+                        strokeWidth={isHovered ? '2.5' : '1'}
+                        opacity={isHovered ? 1 : 0.85}
+                        className="transition-all duration-300 filter drop-shadow-md hover:brightness-125"
                       />
+                      <text
+                        x={mr.labelPos.x}
+                        y={mr.labelPos.y}
+                        fill="#ffffff"
+                        fontSize="9"
+                        fontWeight="bold"
+                        className="pointer-events-none select-none drop-shadow-md"
+                      >
+                        {mr.code}
+                      </text>
                     </g>
                   );
                 })}
-              </>
-            )}
-          </svg>
+
+              {/* GPS Mode: Exact GPS Lat/Lng Pinpoint Markers */}
+              {viewMode === 'gps' && (
+                <>
+                  {/* Subtle base island outlines */}
+                  {MAP_REGIONS.map((mr) => (
+                    <path key={mr.code} d={mr.path} fill="#1e293b" stroke="#334155" strokeWidth="0.8" opacity="0.5" />
+                  ))}
+
+                  {projectPinsNormalized.map((p) => {
+                    const isStalled = p.anomaly.isStalled;
+                    const isNeverStarted = p.anomaly.isNeverStarted;
+                    const isOverdue = p.anomaly.isOverdue;
+
+                    const pinColor = isNeverStarted
+                      ? '#f43f5e'
+                      : isStalled
+                      ? '#f59e0b'
+                      : isOverdue
+                      ? '#a855f7'
+                      : '#10b981';
+
+                    return (
+                      <g
+                        key={p.id}
+                        className="cursor-pointer group"
+                        onClick={() => router.push(`/projects/${p.id}`)}
+                        onMouseEnter={() => setHoveredPin(p)}
+                        onMouseLeave={() => setHoveredPin(null)}
+                      >
+                        {/* Pulse Ring for Flagged Projects */}
+                        {(isStalled || isNeverStarted) && (
+                          <circle cx={p.svgX} cy={p.svgY} r="9" fill={pinColor} opacity="0.3" className="animate-ping" />
+                        )}
+
+                        {/* Pin Circle */}
+                        <circle
+                          cx={p.svgX}
+                          cy={p.svgY}
+                          r={zoomScale > 1.5 ? '4' : '5.5'}
+                          fill={pinColor}
+                          stroke="#ffffff"
+                          strokeWidth="1.5"
+                          className="transition-transform group-hover:scale-150"
+                        />
+                      </g>
+                    );
+                  })}
+                </>
+              )}
+            </svg>
+          </div>
 
           {/* Hover Tooltip for Regional View */}
           {viewMode === 'regional' && hoveredRegion && (
