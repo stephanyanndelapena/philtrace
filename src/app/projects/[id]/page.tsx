@@ -85,18 +85,18 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
               </span>
 
               {anomaly.isStalled && (
-                <span className="bg-amber-500/20 text-amber-400 border border-amber-500/40 text-xs font-bold px-3 py-1 rounded-lg flex items-center gap-1">
-                  <Activity className="w-3.5 h-3.5" /> STALLED FLAG
+                <span className="bg-amber-500/20 text-amber-400 border border-amber-500/40 text-xs font-bold px-3 py-1 rounded-lg">
+                  STALLED FLAG
                 </span>
               )}
               {anomaly.isNeverStarted && (
-                <span className="bg-rose-500/20 text-rose-400 border border-rose-500/40 text-xs font-bold px-3 py-1 rounded-lg flex items-center gap-1">
-                  <FileWarning className="w-3.5 h-3.5" /> NEVER STARTED FLAG
+                <span className="bg-rose-500/20 text-rose-400 border border-rose-500/40 text-xs font-bold px-3 py-1 rounded-lg">
+                  NEVER STARTED FLAG
                 </span>
               )}
               {anomaly.isOverdue && (
-                <span className="bg-purple-500/20 text-purple-300 border border-purple-500/40 text-xs font-bold px-3 py-1 rounded-lg flex items-center gap-1">
-                  <Clock className="w-3.5 h-3.5" /> OVERDUE DEADLINE
+                <span className="bg-purple-500/20 text-purple-300 border border-purple-500/40 text-xs font-bold px-3 py-1 rounded-lg">
+                  OVERDUE DEADLINE
                 </span>
               )}
             </div>

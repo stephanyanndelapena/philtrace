@@ -227,20 +227,17 @@ export default async function HomePage({ searchParams }: PageProps) {
                 {/* Anomaly Badges */}
                 <div className="flex flex-wrap items-center gap-2">
                   {p.anomaly.isStalled && (
-                    <span className="bg-amber-500/20 text-amber-400 border border-amber-500/40 text-[10px] font-bold px-2.5 py-0.5 rounded-md flex items-center gap-1">
-                      <Activity className="w-3 h-3" />
+                    <span className="bg-amber-500/20 text-amber-400 border border-amber-500/40 text-[10px] font-bold px-2.5 py-0.5 rounded-md">
                       STALLED
                     </span>
                   )}
                   {p.anomaly.isNeverStarted && (
-                    <span className="bg-rose-500/20 text-rose-400 border border-rose-500/40 text-[10px] font-bold px-2.5 py-0.5 rounded-md flex items-center gap-1">
-                      <FileWarning className="w-3 h-3" />
+                    <span className="bg-rose-500/20 text-rose-400 border border-rose-500/40 text-[10px] font-bold px-2.5 py-0.5 rounded-md">
                       NEVER STARTED
                     </span>
                   )}
                   {p.anomaly.isOverdue && (
-                    <span className="bg-purple-500/20 text-purple-300 border border-purple-500/40 text-[10px] font-bold px-2.5 py-0.5 rounded-md flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
+                    <span className="bg-purple-500/20 text-purple-300 border border-purple-500/40 text-[10px] font-bold px-2.5 py-0.5 rounded-md">
                       OVERDUE
                     </span>
                   )}

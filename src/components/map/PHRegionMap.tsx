@@ -157,35 +157,32 @@ export const PHRegionMap: React.FC<PHRegionMapProps> = ({
             </button>
             <button
               onClick={() => handleFilterClick('stalled')}
-              className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all ${
+              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
                 selectedFilter === 'stalled'
                   ? 'bg-amber-500 text-slate-950'
                   : 'bg-slate-800 text-amber-400 hover:bg-slate-700'
               }`}
             >
-              <Activity className="w-3 h-3" />
               Stalled
             </button>
             <button
               onClick={() => handleFilterClick('never_started')}
-              className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all ${
+              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
                 selectedFilter === 'never_started'
                   ? 'bg-rose-500 text-white'
                   : 'bg-slate-800 text-rose-400 hover:bg-slate-700'
               }`}
             >
-              <FileWarning className="w-3 h-3" />
               Never Started
             </button>
             <button
               onClick={() => handleFilterClick('overdue')}
-              className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all ${
+              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
                 selectedFilter === 'overdue'
                   ? 'bg-purple-500 text-white'
                   : 'bg-slate-800 text-purple-400 hover:bg-slate-700'
               }`}
             >
-              <Clock className="w-3 h-3" />
               Overdue
             </button>
           </div>

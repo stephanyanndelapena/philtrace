@@ -109,13 +109,13 @@ export default async function RegionPage({ params }: RegionPageProps) {
                   </span>
 
                   {p.anomaly.isStalled && (
-                    <span className="bg-amber-500/20 text-amber-400 border border-amber-500/40 text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1">
-                      <Activity className="w-3 h-3" /> STALLED
+                    <span className="bg-amber-500/20 text-amber-400 border border-amber-500/40 text-[10px] font-bold px-2 py-0.5 rounded">
+                      STALLED
                     </span>
                   )}
                   {p.anomaly.isNeverStarted && (
-                    <span className="bg-rose-500/20 text-rose-400 border border-rose-500/40 text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1">
-                      <FileWarning className="w-3 h-3" /> NEVER STARTED
+                    <span className="bg-rose-500/20 text-rose-400 border border-rose-500/40 text-[10px] font-bold px-2 py-0.5 rounded">
+                      NEVER STARTED
                     </span>
                   )}
                 </div>

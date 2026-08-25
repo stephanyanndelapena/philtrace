@@ -80,6 +80,7 @@ export const Header: React.FC = () => {
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 transition-all disabled:opacity-50"
             title="Sync Live Open Data from PhilGEPS, DPWH & DBM"
           >
+            <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin text-emerald-300' : ''}`} />
             <span className="hidden lg:inline">{isSyncing ? 'Syncing Portal...' : 'Sync Live Data'}</span>
           </button>
 
