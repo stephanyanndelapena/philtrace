@@ -115,7 +115,7 @@ export const PHRegionMap: React.FC<PHRegionMapProps> = ({
           </p>
         </div>
 
-        {/* View Mode Toggle & Anomaly Filters */}
+        {/* View Mode Toggle */}
         <div className="flex flex-wrap items-center gap-3">
           {/* Dual View Mode Switcher */}
           <div className="bg-slate-950 p-1 rounded-xl border border-slate-800 flex items-center gap-1">
@@ -140,50 +140,6 @@ export const PHRegionMap: React.FC<PHRegionMapProps> = ({
             >
               <Navigation className="w-3.5 h-3.5" />
               GPS Pins Map ({projects.length})
-            </button>
-          </div>
-
-          {/* Anomaly Status Filter Buttons */}
-          <div className="flex flex-wrap items-center gap-1.5">
-            <button
-              onClick={() => handleFilterClick('all')}
-              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
-                selectedFilter === 'all'
-                  ? 'bg-emerald-500 text-slate-950'
-                  : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-              }`}
-            >
-              All
-            </button>
-            <button
-              onClick={() => handleFilterClick('stalled')}
-              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
-                selectedFilter === 'stalled'
-                  ? 'bg-amber-500 text-slate-950'
-                  : 'bg-slate-800 text-amber-400 hover:bg-slate-700'
-              }`}
-            >
-              Stalled
-            </button>
-            <button
-              onClick={() => handleFilterClick('never_started')}
-              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
-                selectedFilter === 'never_started'
-                  ? 'bg-rose-500 text-white'
-                  : 'bg-slate-800 text-rose-400 hover:bg-slate-700'
-              }`}
-            >
-              Never Started
-            </button>
-            <button
-              onClick={() => handleFilterClick('overdue')}
-              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
-                selectedFilter === 'overdue'
-                  ? 'bg-purple-500 text-white'
-                  : 'bg-slate-800 text-purple-400 hover:bg-slate-700'
-              }`}
-            >
-              Overdue
             </button>
           </div>
         </div>
