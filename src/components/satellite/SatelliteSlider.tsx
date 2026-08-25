@@ -38,8 +38,7 @@ export const SatelliteSlider: React.FC<SatelliteSliderProps> = ({
     <div className="w-full bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-emerald-400 uppercase tracking-wider">
-            <Sparkles className="w-4 h-4" />
+          <div className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">
             Satellite Time-Travel Visualizer
           </div>
           <h3 className="text-lg font-bold text-white mt-1">

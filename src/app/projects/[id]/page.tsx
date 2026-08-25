@@ -120,8 +120,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
 
             <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
               <div className="text-slate-400 font-semibold mb-0.5">Awarded Contractor</div>
-              <div className="text-sm font-bold text-white flex items-center gap-1">
-                <Building2 className="w-4 h-4 text-emerald-400 shrink-0" />
+              <div className="text-sm font-bold text-white">
                 {project.contractor.name}
               </div>
             </div>
@@ -134,7 +133,6 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                 rel="noreferrer"
                 className="text-xs font-bold text-cyan-400 hover:underline flex items-center gap-1"
               >
-                <FileText className="w-4 h-4" />
                 Procurement Notice PDF
                 <ExternalLink className="w-3 h-3" />
               </a>
@@ -145,16 +143,11 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
 
       {/* Structured AI Briefing Card */}
       <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
-        <div className="flex items-center gap-2 border-b border-slate-800 pb-4">
-          <div className="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
-            <Sparkles className="w-4 h-4" />
-          </div>
-          <div>
-            <h2 className="text-lg font-bold text-white">Gemini AI Structured Briefing</h2>
-            <p className="text-xs text-slate-400 font-mono">
-              Extracted directly from source PDF procurement documentation
-            </p>
-          </div>
+        <div className="border-b border-slate-800 pb-4">
+          <h2 className="text-lg font-bold text-white">Gemini AI Structured Briefing</h2>
+          <p className="text-xs text-slate-400 font-mono mt-0.5">
+            Extracted directly from source PDF procurement documentation
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
@@ -184,8 +177,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
 
             {briefing.sourceAgency && (
               <div className="bg-cyan-950/40 p-4 rounded-xl border border-cyan-500/40">
-                <div className="font-bold text-cyan-400 uppercase text-[11px] mb-1 flex items-center gap-1">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
+                <div className="font-bold text-cyan-400 uppercase text-[11px] mb-1">
                   OFFICIAL GOVERNMENT SOURCE CITATION
                 </div>
                 <div className="text-cyan-200 leading-relaxed font-medium space-y-1">
@@ -198,8 +190,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
 
             {briefing.keyRisks && (
               <div className="bg-rose-950/40 p-4 rounded-xl border border-rose-500/40">
-                <div className="font-bold text-rose-400 uppercase text-[11px] mb-1 flex items-center gap-1">
-                  <ShieldAlert className="w-3.5 h-3.5" />
+                <div className="font-bold text-rose-400 uppercase text-[11px] mb-1">
                   KEY RISK SUMMARY
                 </div>
                 <div className="text-rose-200 leading-relaxed font-medium">
@@ -232,8 +223,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
           {/* Column 1: Official Agency Updates */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-cyan-400 flex items-center gap-2">
-                <Building2 className="w-4 h-4" />
+              <h3 className="text-base font-bold text-cyan-400">
                 Official Agency Claims ({project.agencyUpdates.length})
               </h3>
               <span className="text-[11px] text-slate-400 font-mono">Government Updates</span>
