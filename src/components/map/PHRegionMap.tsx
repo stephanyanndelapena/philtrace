@@ -106,8 +106,7 @@ export const PHRegionMap: React.FC<PHRegionMapProps> = ({
       {/* Header & Anomaly Filter Controls */}
       <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-slate-800">
         <div>
-          <h2 className="text-xl font-bold text-white flex items-center gap-2">
-            <MapPin className="w-5 h-5 text-emerald-400" />
+          <h2 className="text-xl font-bold text-white">
             Interactive Philippines Infrastructure Map
           </h2>
           <p className="text-slate-400 text-sm mt-1">

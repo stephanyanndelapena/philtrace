@@ -151,8 +151,7 @@ export default async function HomePage({ searchParams }: PageProps) {
           </div>
 
           <div className="bg-slate-950/60 p-4 rounded-2xl border border-amber-500/30">
-            <div className="text-xs text-amber-400 mb-1 font-semibold flex items-center gap-1">
-              <Activity className="w-3.5 h-3.5" />
+            <div className="text-xs text-amber-400 mb-1 font-semibold">
               Stalled Projects
             </div>
             <div className="text-2xl font-extrabold text-amber-400">{totalStalled}</div>
@@ -160,8 +159,7 @@ export default async function HomePage({ searchParams }: PageProps) {
           </div>
 
           <div className="bg-slate-950/60 p-4 rounded-2xl border border-rose-500/30">
-            <div className="text-xs text-rose-400 mb-1 font-semibold flex items-center gap-1">
-              <FileWarning className="w-3.5 h-3.5" />
+            <div className="text-xs text-rose-400 mb-1 font-semibold">
               Never Started
             </div>
             <div className="text-2xl font-extrabold text-rose-400">{totalNeverStarted}</div>
@@ -169,8 +167,7 @@ export default async function HomePage({ searchParams }: PageProps) {
           </div>
 
           <div className="bg-slate-950/60 p-4 rounded-2xl border border-purple-500/30">
-            <div className="text-xs text-purple-400 mb-1 font-semibold flex items-center gap-1">
-              <ShieldAlert className="w-3.5 h-3.5" />
+            <div className="text-xs text-purple-400 mb-1 font-semibold">
               Shell Companies
             </div>
             <div className="text-2xl font-extrabold text-purple-400">{totalShellContractors}</div>
