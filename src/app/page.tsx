@@ -102,6 +102,8 @@ export default async function HomePage({ searchParams }: PageProps) {
     filteredProjects = filteredProjects.filter((p) => p.anomaly.isNeverStarted);
   } else if (activeFilter === 'overdue') {
     filteredProjects = filteredProjects.filter((p) => p.anomaly.isOverdue);
+  } else if (activeFilter === 'on_track') {
+    filteredProjects = filteredProjects.filter((p) => !p.anomaly.flags.length);
   }
 
   if (search) {
@@ -202,19 +204,77 @@ export default async function HomePage({ searchParams }: PageProps) {
 
       {/* Global Project Explorer Section */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-4 pb-2 border-b border-slate-800/80">
           <div>
             <h2 className="text-xl font-bold text-white">Project Investigation Directory</h2>
-            <p className="text-xs text-slate-400">
-              Select a project card to view AI briefings, satellite time-travel visualizer, and whistleblower thread.
+            <p className="text-xs text-slate-400 mt-0.5">
+              Filter and select any project card to view AI briefings, satellite visualizer, and whistleblower observations.
             </p>
           </div>
-          {search && (
-            <Link href="/" className="text-xs text-emerald-400 hover:underline">
-              Clear Search Filter ({filteredProjects.length} results)
+
+          {/* Directory Filter Buttons */}
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              href="/?filter=all"
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                activeFilter === 'all'
+                  ? 'bg-emerald-500 text-slate-950 shadow-md'
+                  : 'bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800'
+              }`}
+            >
+              All ({projectsWithAnomalies.length})
             </Link>
-          )}
+            <Link
+              href="/?filter=on_track"
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                activeFilter === 'on_track'
+                  ? 'bg-emerald-500/30 text-emerald-300 border border-emerald-500/50 shadow-md'
+                  : 'bg-slate-900 text-emerald-400 hover:bg-slate-800 border border-slate-800'
+              }`}
+            >
+              On Track ({projectsWithAnomalies.filter((p) => !p.anomaly.flags.length).length})
+            </Link>
+            <Link
+              href="/?filter=never_started"
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                activeFilter === 'never_started'
+                  ? 'bg-rose-500 text-white shadow-md'
+                  : 'bg-slate-900 text-rose-400 hover:bg-slate-800 border border-slate-800'
+              }`}
+            >
+              Never Started ({totalNeverStarted})
+            </Link>
+            <Link
+              href="/?filter=overdue"
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                activeFilter === 'overdue'
+                  ? 'bg-purple-500 text-white shadow-md'
+                  : 'bg-slate-900 text-purple-400 hover:bg-slate-800 border border-slate-800'
+              }`}
+            >
+              Overdue ({projectsWithAnomalies.filter((p) => p.anomaly.isOverdue).length})
+            </Link>
+            <Link
+              href="/?filter=stalled"
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                activeFilter === 'stalled'
+                  ? 'bg-amber-500 text-slate-950 shadow-md'
+                  : 'bg-slate-900 text-amber-400 hover:bg-slate-800 border border-slate-800'
+              }`}
+            >
+              Stalled ({totalStalled})
+            </Link>
+          </div>
         </div>
+
+        {search && (
+          <div className="text-xs text-slate-400">
+            Showing search results for <strong className="text-white">"{search}"</strong>.{' '}
+            <Link href="/" className="text-emerald-400 hover:underline">
+              Clear search filter
+            </Link>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProjects.map((p) => (
