@@ -182,6 +182,20 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
               </div>
             </div>
 
+            {briefing.sourceAgency && (
+              <div className="bg-cyan-950/40 p-4 rounded-xl border border-cyan-500/40">
+                <div className="font-bold text-cyan-400 uppercase text-[11px] mb-1 flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  OFFICIAL GOVERNMENT SOURCE CITATION
+                </div>
+                <div className="text-cyan-200 leading-relaxed font-medium space-y-1">
+                  <div><strong className="text-slate-300">Agency:</strong> {briefing.sourceAgency}</div>
+                  {briefing.officialControlNo && <div><strong className="text-slate-300">Control ID:</strong> {briefing.officialControlNo}</div>}
+                  {briefing.philGepsBidRef && <div><strong className="text-slate-300">PhilGEPS Ref:</strong> {briefing.philGepsBidRef}</div>}
+                </div>
+              </div>
+            )}
+
             {briefing.keyRisks && (
               <div className="bg-rose-950/40 p-4 rounded-xl border border-rose-500/40">
                 <div className="font-bold text-rose-400 uppercase text-[11px] mb-1 flex items-center gap-1">

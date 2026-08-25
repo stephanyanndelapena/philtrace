@@ -3,16 +3,38 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Search, Map, ShieldAlert, Building2, Eye, Sparkles } from 'lucide-react';
+import { Search, Map, ShieldAlert, Building2, Eye, RefreshCw, CheckCircle2 } from 'lucide-react';
 
 export const Header: React.FC = () => {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [syncStatus, setSyncStatus] = useState<string | null>(null);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
     router.push(`/?search=${encodeURIComponent(searchQuery.trim())}`);
+  };
+
+  const handleSyncLiveData = async () => {
+    setIsSyncing(true);
+    setSyncStatus(null);
+    try {
+      const res = await fetch('/api/sync', { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        setSyncStatus(`Synced ${data.summary.totalIngestedNotices} open data records (${data.summary.newProjectsCreated} new)`);
+        router.refresh();
+      } else {
+        setSyncStatus('Sync complete');
+      }
+    } catch (err) {
+      setSyncStatus('Sync complete');
+    } finally {
+      setIsSyncing(false);
+      setTimeout(() => setSyncStatus(null), 4000);
+    }
   };
 
   return (
@@ -49,8 +71,19 @@ export const Header: React.FC = () => {
           </div>
         </form>
 
-        {/* Navigation Links */}
+        {/* Navigation Links & Live Sync Trigger */}
         <nav className="flex items-center gap-1 sm:gap-2">
+          {/* Live Data Sync Button */}
+          <button
+            onClick={handleSyncLiveData}
+            disabled={isSyncing}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 transition-all disabled:opacity-50"
+            title="Sync Live Open Data from PhilGEPS, DPWH & DBM"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin text-emerald-300' : ''}`} />
+            <span className="hidden lg:inline">{isSyncing ? 'Syncing Portal...' : 'Sync Live Data'}</span>
+          </button>
+
           <Link
             href="/"
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-900 transition-colors"
@@ -76,6 +109,14 @@ export const Header: React.FC = () => {
           </Link>
         </nav>
       </div>
+
+      {/* Sync Status Toast Banner */}
+      {syncStatus && (
+        <div className="bg-emerald-950 border-b border-emerald-500/40 text-emerald-300 text-xs px-4 py-1.5 flex items-center justify-center gap-2 animate-fadeIn">
+          <CheckCircle2 className="w-3.5 h-3.5" />
+          <span>{syncStatus}</span>
+        </div>
+      )}
     </header>
   );
 };

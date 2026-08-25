@@ -177,11 +177,28 @@ export default async function HomePage({ searchParams }: PageProps) {
         </div>
       </div>
 
-      {/* Interactive Philippines Region Map Component */}
-      <PHRegionMap
-        regions={regionSummaries}
-        selectedFilter={activeFilter}
-      />
+      {/* Format Project Pins for Map Pinpoint View */}
+      {(() => {
+        const projectPins = projectsWithAnomalies.map((p) => ({
+          id: p.id,
+          name: p.name,
+          gpsLat: p.gpsLat,
+          gpsLng: p.gpsLng,
+          budgetPHP: p.budgetPHP,
+          provinceName: p.province.name,
+          regionCode: p.province.region.code,
+          contractorName: p.contractor.name,
+          anomaly: p.anomaly,
+        }));
+
+        return (
+          <PHRegionMap
+            regions={regionSummaries}
+            projects={projectPins}
+            selectedFilter={activeFilter}
+          />
+        );
+      })()}
 
       {/* Global Project Explorer Section */}
       <div className="space-y-4">

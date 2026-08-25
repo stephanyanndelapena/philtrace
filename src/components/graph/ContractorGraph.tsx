@@ -19,14 +19,23 @@ export const ContractorGraph: React.FC = () => {
   const [selectedNode, setSelectedNode] = useState<SelectedContractor | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const cyRef = useRef<cytoscape.Core | null>(null);
+
   useEffect(() => {
-    if (!containerRef.current) return;
+    let isMounted = true;
 
     fetch('/api/contractors/graph')
       .then((res) => res.json())
       .then((data) => {
+        if (!isMounted) return;
         setLoading(false);
         if (!containerRef.current || !data.elements) return;
+
+        // Safely destroy existing instance before creating a new one
+        if (cyRef.current) {
+          cyRef.current.destroy();
+          cyRef.current = null;
+        }
 
         const cy = cytoscape({
           container: containerRef.current,
@@ -74,12 +83,15 @@ export const ContractorGraph: React.FC = () => {
           ],
           layout: {
             name: 'cose',
-            animate: true,
+            animate: false,
             padding: 50,
           },
         });
 
+        cyRef.current = cy;
+
         cy.on('tap', 'node', (evt) => {
+          if (!isMounted) return;
           const node = evt.target;
           const nodeData = node.data();
           setSelectedNode({
@@ -94,9 +106,18 @@ export const ContractorGraph: React.FC = () => {
         });
       })
       .catch((err) => {
+        if (!isMounted) return;
         console.error('Failed to load contractor graph data:', err);
         setLoading(false);
       });
+
+    return () => {
+      isMounted = false;
+      if (cyRef.current) {
+        cyRef.current.destroy();
+        cyRef.current = null;
+      }
+    };
   }, []);
 
   return (
