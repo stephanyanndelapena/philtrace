@@ -258,6 +258,21 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
 
                   <p className="text-xs text-slate-200 leading-relaxed font-medium">{u.note}</p>
 
+                  {u.photoUrl && (
+                    <div className="bg-slate-950 p-2 rounded-xl border border-slate-800 inline-block">
+                      <div className="text-[10px] text-slate-400 flex items-center gap-1 mb-1 font-mono">
+                        <FileText className="w-3 h-3 text-cyan-400" />
+                        Official Attached Documentation Photo
+                      </div>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={u.photoUrl}
+                        alt="Agency Progress Evidence"
+                        className="max-h-48 rounded-lg object-cover"
+                      />
+                    </div>
+                  )}
+
                   <div className="text-[10px] text-slate-500 font-mono pt-2">
                     Timestamped: {new Date(u.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                   </div>
